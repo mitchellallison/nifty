@@ -16,7 +16,7 @@ this story is the Swift compiler itself,
 enabling features from type inference to the
 REPL (Read-Evaluate-Print-Loop).
 
-In this series of blog posts, we'll be taking a basic look at compiler
+In this series of [blog posts][blog], we'll be taking a basic look at compiler
 architecture and developing our very own Swift compiler, Nifty, written (mostly) in
 Swift.
 
@@ -153,4 +153,5 @@ from the LLVM team on "Implementing a language with LLVM".
 [1]:  https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/
 [2]:   https://itunes.apple.com/gb/book/swift-programming-language/id881256329?mt=11
 [kaleidoscope]: http://llvm.org/docs/tutorial/LangImpl1.html
+[blog]: http://www.mitchellallison.com/blog/
 
