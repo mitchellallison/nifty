@@ -131,7 +131,10 @@ enum SwiftToken: Printable, Equatable {
     
     :returns: A lexical representation of the program.
     */
-    static func tokenise(var input: String) -> SwiftLexicalRepresentation {
+    static func tokenise(var input: String) -> (SwiftLexicalRepresentation, [SCError]?) {
+        
+        var errors = [SCError]()
+        
         let identifierRegex = "([a-z_][a-z0-9]*)"
         
         var linepos = 1, line = 1
@@ -367,9 +370,9 @@ enum SwiftToken: Printable, Equatable {
                 // Matches anything else. At this point, an error must have occured
                 .match(/"^.*") {
                     tokens.append(SwiftToken.Invalid($0[0]))
-                    context.append(LineContext(pos: cachedLinePos, line: cachedLine))
+                    context.append(LineContext(pos: linepos, line: line))
+                    errors.append(SCError(message: "Invalid syntax \($0[0]) encountered.", lineContext: LineContext(pos: linepos, line: line)))
                     linepos += countElements($0[0])
-                    println("ERROR: Syntax error encountered at line: " + line.description + " position:" + linepos.description)
                 }?
             
             // Get position of the first character in our input string.
@@ -379,7 +382,13 @@ enum SwiftToken: Printable, Equatable {
             // Replace old string with substring starting from newIndex
             input = input.substringFromIndex(newIndex)
         }
-        return SwiftLexicalRepresentation(tokens: tokens, context: context)
+        let rep = SwiftLexicalRepresentation(tokens: tokens, context: context)
+        if (errors.isEmpty) {
+            return (rep, nil)
+        } else {
+            return (rep, errors)
+        }
+        
     }
 }
 

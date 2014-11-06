@@ -7,3 +7,25 @@
 //
 
 import Foundation
+
+extension String {
+    func tokenise() -> SwiftLexicalRepresentation? {
+        let (rep, errors) = SwiftToken.tokenise(self)
+        if (errors == nil) {
+            return rep
+        } else {
+            return nil
+        }
+    }
+}
+
+extension SwiftLexicalRepresentation {
+    func parse() -> SwiftAST? {
+        let parser = SwiftParser(tokens: tokens, lineContext: context)
+        return parser.generateAST()
+    }
+}
+
+if let ast = "let x: Int = 1".tokenise()?.parse() {
+    println(ast)
+}
