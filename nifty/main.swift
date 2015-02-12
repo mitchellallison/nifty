@@ -22,7 +22,8 @@ extension String {
 extension SwiftLexicalRepresentation {
     func parse() -> SwiftAST? {
         let parser = SwiftParser(tokens: tokens, lineContext: context)
-        return parser.generateAST()
+        let ast = parser.generateAST()
+        return ast
     }
 }
 

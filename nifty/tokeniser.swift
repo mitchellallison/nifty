@@ -31,13 +31,21 @@ public func ==(lhs: LineContext, rhs: LineContext) -> Bool {
 // A lexical representation of a source program. Composed of an array of SwiftToken enums, and
 // a corresponding array of LineContext objects, referring to the position at which the enums
 // were encountered in the source.
-class SwiftLexicalRepresentation {
+class SwiftLexicalRepresentation: Printable {
     var tokens: [SwiftToken]
     var context: [LineContext]
     
     init(tokens: [SwiftToken], context: [LineContext]) {
         self.tokens = tokens
         self.context = context
+    }
+    
+    var description: String {
+        let tokenDescriptions = tokens.map({$0.description + " "})
+        let description = tokenDescriptions.reduce("", combine: { (description, token) -> String in
+            description + token
+        })
+        return description
     }
 }
 
@@ -50,8 +58,6 @@ enum SwiftToken: Printable, Equatable {
     case Identifier(String)
     
     case PrefixOperator(String), InfixOperator(String), PostfixOperator(String)
-    
-    case Equal
     
     case VariableDeclaration, ConstantDeclaration
     
@@ -89,8 +95,6 @@ enum SwiftToken: Printable, Equatable {
             return string
         case .PostfixOperator(let string):
             return string
-        case .Equal:
-            return "="
         case .VariableDeclaration:
             return "var"
         case .ConstantDeclaration:
@@ -156,7 +160,7 @@ enum SwiftToken: Printable, Equatable {
                     let num = strtol($0[1], nil, 2)
                     tokens.append(SwiftToken.IntegerLiteral(num))
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches an octal literal e.g 0c106
@@ -164,7 +168,7 @@ enum SwiftToken: Printable, Equatable {
                     let num = strtol($0[1], nil, 8)
                     tokens.append(SwiftToken.IntegerLiteral(num))
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches a hexadecimal literal e.g 0xdeadbeef
@@ -172,7 +176,7 @@ enum SwiftToken: Printable, Equatable {
                     let num = strtol($0[1], nil, 16)
                     tokens.append(SwiftToken.IntegerLiteral(num))
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
         
                 // Matches a Double literal e.g 1.1
@@ -180,7 +184,7 @@ enum SwiftToken: Printable, Equatable {
                     let num = $0[0] as NSString
                     tokens.append(SwiftToken.DoubleLiteral(num.doubleValue))
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches an Int literal e.g 1
@@ -188,7 +192,7 @@ enum SwiftToken: Printable, Equatable {
                     let num = strtol($0[0], nil, 10)
                     tokens.append(SwiftToken.IntegerLiteral(num))
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 
@@ -198,14 +202,14 @@ enum SwiftToken: Printable, Equatable {
                 .match(/"^var(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.VariableDeclaration)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches the let keyword
                 .match(/"^let(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.ConstantDeclaration)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Keywords
@@ -214,42 +218,42 @@ enum SwiftToken: Printable, Equatable {
                 .match(/"^func(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.Function)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches the if keyword
                 .match(/"^if(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.If)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
 
                 // Matches the while keyword
                 .match(/"^while(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.While)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches the return keyword
                 .match(/"^return(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.Return)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches the true keyword
                 .match(/"^true(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.True)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
 
                 // Matches the false keyword
                 .match(/"^false(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.False)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Identifiers
@@ -260,17 +264,17 @@ enum SwiftToken: Printable, Equatable {
                     if !$0[1].isEmpty {
                         tokens.append(SwiftToken.PrefixOperator($0[1]))
                         context.append(LineContext(pos: newLinePos, line: cachedLine))
-                        newLinePos += countElements($0[1])
+                        newLinePos += count($0[1])
                     }
                     tokens.append(SwiftToken.Identifier($0[2]))
                     context.append(LineContext(pos: newLinePos, line: cachedLine))
-                    newLinePos += countElements($0[2])
+                    newLinePos += count($0[2])
                     if !$0[3].isEmpty {
                         // tokenise postfix operator
                         tokens.append(SwiftToken.PostfixOperator($0[3]))
                         context.append(LineContext(pos: newLinePos, line: cachedLine))
                     }
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Operators & punctuation
@@ -279,21 +283,15 @@ enum SwiftToken: Printable, Equatable {
                 .match(/"^->") {
                     tokens.append(SwiftToken.Returns)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
+                
                 
                 // Matches the infix operators (+,-,*,/)
-                .match(/"^[\\+\\-/*<>]") {
+                .match(/"^[\\+\\-/*<>=](=)?") {
                     tokens.append(SwiftToken.InfixOperator($0[0]))
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
-                }?
-                
-                // Matches the = operator
-                .match(/"^=") {
-                    tokens.append(SwiftToken.Equal)
-                    context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Parentheses & Tuples
@@ -302,35 +300,35 @@ enum SwiftToken: Printable, Equatable {
                 .match(/"^\\(") {
                     tokens.append(SwiftToken.LeftBracket)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches a left brace
                 .match(/"^\\{") {
                     tokens.append(SwiftToken.LeftBrace)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches a right bracket
                 .match(/"^\\)") {
                     tokens.append(SwiftToken.RightBracket)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches a right brace
                 .match(/"^\\}") {
                     tokens.append(SwiftToken.RightBrace)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches a comma
                 .match(/"^,") {
                     tokens.append(SwiftToken.Comma)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Type declaration
@@ -339,7 +337,7 @@ enum SwiftToken: Printable, Equatable {
                 .match(/"^:") {
                     tokens.append(SwiftToken.Colon)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 
@@ -357,12 +355,12 @@ enum SwiftToken: Printable, Equatable {
                 .match(/"^(;)+") {
                     tokens.append(SwiftToken.SemiColon)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Matches any other whitespace
                 .match(/"^\\s") {
-                    linepos += countElements($0[0])
+                    linepos += count($0[0])
                 }?
                 
                 // Error
@@ -372,8 +370,8 @@ enum SwiftToken: Printable, Equatable {
                     tokens.append(SwiftToken.Invalid($0[0]))
                     context.append(LineContext(pos: linepos, line: line))
                     errors.append(SCError(message: "Invalid syntax \($0[0]) encountered.", lineContext: LineContext(pos: linepos, line: line)))
-                    linepos += countElements($0[0])
-                }?
+                    linepos += count($0[0])
+                }
             
             // Get position of the first character in our input string.
             var index = input.startIndex
@@ -424,7 +422,7 @@ extension String {
     :returns: An NSRange relating to the length of the string.
     */
     func range() -> NSRange {
-        return NSMakeRange(0, countElements(self))
+        return NSMakeRange(0, count(self))
     }
     
     /**

@@ -8,7 +8,7 @@
 
 import XCTest
 
-class TestParser: XCTestCase {
+class TestDeclarationParsing: XCTestCase {
 
     func testLetDeclaration() {
         let program = "let x = 1"

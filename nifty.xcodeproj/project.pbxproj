@@ -7,14 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		954D22991A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954D22981A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift */; };
 		956924C11A09735A0013318A /* parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956924C01A09735A0013318A /* parser.swift */; };
+		95938D031A82642600DE953C /* TestExpressionParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95938D021A82642600DE953C /* TestExpressionParsing.swift */; };
+		95938D051A82754E00DE953C /* TestControlFlowParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95938D041A82754E00DE953C /* TestControlFlowParsing.swift */; };
 		95974E841A00FF77004E4EC3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95974E831A00FF77004E4EC3 /* main.swift */; };
 		95974E8D1A00FFE7004E4EC3 /* tokeniser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95974E8C1A00FFE7004E4EC3 /* tokeniser.swift */; };
 		95974E9E1A0100F5004E4EC3 /* TestLexicalAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95974E8E1A010011004E4EC3 /* TestLexicalAnalysis.swift */; };
 		95974E9F1A010104004E4EC3 /* tokeniser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95974E8C1A00FFE7004E4EC3 /* tokeniser.swift */; };
 		95B125131A0A882A003C832E /* error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B125121A0A882A003C832E /* error.swift */; };
 		95B125141A0A882A003C832E /* error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B125121A0A882A003C832E /* error.swift */; };
-		95B125161A0B843E003C832E /* TestParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B125151A0B843E003C832E /* TestParser.swift */; };
+		95B125161A0B843E003C832E /* TestDeclaration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B125151A0B843E003C832E /* TestDeclaration.swift */; };
 		95B125171A0B8702003C832E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95974E831A00FF77004E4EC3 /* main.swift */; };
 		95B125181A0BBD10003C832E /* parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956924C01A09735A0013318A /* parser.swift */; };
 /* End PBXBuildFile section */
@@ -32,15 +35,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		954D22981A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestFunctionDeclarationParsing.swift; sourceTree = "<group>"; };
 		956924C01A09735A0013318A /* parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = parser.swift; sourceTree = "<group>"; };
+		95938D021A82642600DE953C /* TestExpressionParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestExpressionParsing.swift; sourceTree = "<group>"; };
+		95938D041A82754E00DE953C /* TestControlFlowParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestControlFlowParsing.swift; sourceTree = "<group>"; };
 		95974E801A00FF77004E4EC3 /* nifty */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nifty; sourceTree = BUILT_PRODUCTS_DIR; };
 		95974E831A00FF77004E4EC3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		95974E8C1A00FFE7004E4EC3 /* tokeniser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = tokeniser.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		95974E8E1A010011004E4EC3 /* TestLexicalAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestLexicalAnalysis.swift; path = ../nifty/TestLexicalAnalysis.swift; sourceTree = "<group>"; };
+		95974E8E1A010011004E4EC3 /* TestLexicalAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestLexicalAnalysis.swift; sourceTree = "<group>"; };
 		95974E951A0100A9004E4EC3 /* nifty-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "nifty-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		95974E981A0100A9004E4EC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95B125121A0A882A003C832E /* error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = error.swift; sourceTree = "<group>"; };
-		95B125151A0B843E003C832E /* TestParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestParser.swift; path = ../nifty/TestParser.swift; sourceTree = "<group>"; };
+		95B125151A0B843E003C832E /* TestDeclaration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDeclaration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,8 +99,11 @@
 		95974E961A0100A9004E4EC3 /* nifty-tests */ = {
 			isa = PBXGroup;
 			children = (
+				95938D041A82754E00DE953C /* TestControlFlowParsing.swift */,
+				954D22981A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift */,
 				95974E8E1A010011004E4EC3 /* TestLexicalAnalysis.swift */,
-				95B125151A0B843E003C832E /* TestParser.swift */,
+				95B125151A0B843E003C832E /* TestDeclaration.swift */,
+				95938D021A82642600DE953C /* TestExpressionParsing.swift */,
 				95974E971A0100A9004E4EC3 /* Supporting Files */,
 			);
 			path = "nifty-tests";
@@ -208,7 +217,10 @@
 			files = (
 				95B125181A0BBD10003C832E /* parser.swift in Sources */,
 				95B125171A0B8702003C832E /* main.swift in Sources */,
-				95B125161A0B843E003C832E /* TestParser.swift in Sources */,
+				95B125161A0B843E003C832E /* TestDeclaration.swift in Sources */,
+				95938D031A82642600DE953C /* TestExpressionParsing.swift in Sources */,
+				954D22991A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift in Sources */,
+				95938D051A82754E00DE953C /* TestControlFlowParsing.swift in Sources */,
 				95974E9F1A010104004E4EC3 /* tokeniser.swift in Sources */,
 				95B125141A0A882A003C832E /* error.swift in Sources */,
 				95974E9E1A0100F5004E4EC3 /* TestLexicalAnalysis.swift in Sources */,
