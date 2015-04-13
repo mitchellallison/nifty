@@ -18,6 +18,10 @@ public func ==(lhs: SwiftType, rhs: SwiftType) -> Bool {
     switch (lhs, rhs) {
     case let (l as SwiftTypeIdentifier, r as SwiftTypeIdentifier):
         return l.identifier == r.identifier
+    case let (l as SwiftTupleType, r as SwiftTupleType):
+        return l.types == r.types
+    case let (l as SwiftFunctionType, r as SwiftFunctionType):
+        return l.parameterType == r.parameterType && l.returnType == r.returnType
     default:
         return false
     }
@@ -83,7 +87,7 @@ public class SwiftAST : Equatable, Printable {
     private var childDescriptions: String {
         // For every child, replace all instances of "\n" in their descriptions with "\n\t" to indent appropriately
         let indentedDescriptions = self.children.map({
-            return reduce(split($0.description, { $0 == "\n" }), "") { return $0 + "\n\t" + $1 }
+            return reduce(split($0.description, isSeparator: { $0 == "\n" }), "") { return $0 + "\n\t" + $1 }
         })
         // Then, concatenate all the descriptions
         return reduce(indentedDescriptions, "", +)
@@ -446,8 +450,83 @@ public class SwiftTypeIdentifier: SwiftType {
         super.init(lineContext: lineContext)
     }
     
+    /**
+    Convinience initialiser to initialise a SwiftTypeIdentifier node without LineContext.
+    
+    :param: identifier The type identifier string.
+    
+    :returns: An initialised SwiftTypeIdentifier.
+    **/
+    convenience init(identifier: String) {
+        self.init(identifier: identifier, lineContext: nil)
+    }
+    
+    
     override public var description: String {
         return self.identifier
+    }
+}
+
+// A parameter list type, used for multiple return values and parameter lists in function types.
+public class SwiftTupleType: SwiftType {
+    var types: [SwiftType]
+    
+    /**
+    Initialises a SwiftTupleType node.
+    
+    :param: types A list of SwiftType objects.
+    :param: lineContext An optional LineContext relating to the node.
+    
+    :returns: An initialised SwiftTupleType.
+    **/
+    init (types: [SwiftType], lineContext: LineContext?) {
+        self.types = types
+        super.init(lineContext: lineContext)
+    }
+    
+    override public var description: String {
+        if types.count == 0 {
+            return "Void"
+        }
+        var desc = "("
+        for (i, t) in enumerate(types) {
+            desc += t.description
+            if (i != types.count - 1) {
+                desc += ", "
+            }
+        }
+        desc += ")"
+        return desc
+    }
+}
+
+// A function type.
+public class SwiftFunctionType: SwiftType {
+    var parameterType: SwiftType
+    var returnType: SwiftType
+    
+    /**
+    Initialises a SwiftFunctionType node.
+    
+    :param: parameterType The parameter type.
+    :param: returnType The returnType type.
+    :param: lineContext An LineContext relating to the node.
+    
+    :returns: An initialised SwiftFunctionType.
+    **/
+    init(parameterType: SwiftType, returnType: SwiftType, lineContext: LineContext? = nil) {
+        self.parameterType = parameterType
+        self.returnType = returnType
+        super.init(lineContext: lineContext)
+    }
+    
+    override public var description: String {
+        var description = "("
+        description += parameterType.description
+        description += " -> "
+        description += returnType.description
+        description += ")"
+        return description
     }
 }
 
@@ -863,21 +942,135 @@ public class SwiftParser {
         }
     }
     
+    //MARK: Type parsing
+    
     /**
     Parses a type.
     
-    :returns: A SwiftTypeIdentifier if no errors occured, nil otherwise.
+    :returns: A SwiftType if no errors occured, nil otherwise.
     **/
-    private func parseType() -> SwiftTypeIdentifier? {
+    func parseType() -> SwiftType? {
         switch tokens[0] {
         case .Identifier(let t):
             let context = self.lineContext[0]
             consumeToken()
-            return SwiftTypeIdentifier(identifier: t, lineContext: context)
+            return parseTypeRHS(lhs: SwiftTypeIdentifier(identifier: t, lineContext: context), isBracketed: false)
+        case .Void:
+            let context = self.lineContext[0]
+            consumeToken()
+            // Void is equivalent to the empty tuple ().
+            return parseTypeRHS(lhs: SwiftTupleType(types: [], lineContext: context), isBracketed: false)
+        case .LeftBracket:
+            let typeContext = self.lineContext[0]
+            consumeToken()
+            let t = parseType() ?? SwiftTupleType(types: [], lineContext: typeContext)
+            if let type = parseTypeRHS(lhs: t, isBracketed: true) {
+                return parseTypeRHS(lhs: type)
+            } else {
+                return nil
+            }
         default:
             return nil
         }
     }
+    
+    /**
+    Parses the right hand side of a type.
+    
+    :param: lhs The left hand side of the type.
+    :param: isBracketed Causes the type to be parsed differently if the left hand side includes a bracket.
+    
+    :returns: A SwiftType if no errors occured, nil otherwise.
+    **/
+    func parseTypeRHS(#lhs: SwiftType, isBracketed bracketed: Bool = false) -> SwiftType? {
+        if !tokens.isEmpty {
+            switch tokens[0] {
+                // Close a tuple.
+            case .RightBracket where bracketed:
+                consumeToken()
+                return lhs
+                // Parse the list of types in a TupleType.
+            case .Comma where bracketed:
+                if let type = parseTupleTypeRHS(lhs) {
+                    return parseTypeRHS(lhs: type, isBracketed: bracketed)
+                } else {
+                    return nil
+                }
+            case .Returns:
+                if let type = parseFunctionTypeRHS(parameterType: lhs, isBracketed: bracketed) {
+                    return parseTypeRHS(lhs: type)
+                } else {
+                    return nil
+                }
+            default:
+                if bracketed {
+                    errors.append(SCError(message: "Missing expected ')'.", lineContext: self.lineContext[0]))
+                    return nil
+                } else {
+                    return lhs
+                }
+            }
+        }
+        return lhs
+    }
+    
+    /**
+    Parses the right hand side of a SwiftTupleType.
+    
+    :param: lhs The left hand side of the SwiftTupleType.
+    
+    :returns: A SwiftTupleType if no errors occured, nil otherwise.
+    **/
+    func parseTupleTypeRHS(lhs: SwiftType) -> SwiftTupleType? {
+        var types: [SwiftType] = [lhs]
+        let typeContext = self.lineContext[0]
+        while true {
+            switch tokens[0] {
+            case .Comma:
+                consumeToken()
+            case .RightBracket:
+                return SwiftTupleType(types: types, lineContext: typeContext)
+            default:
+                if let type = parseType() {
+                    types.append(type)
+                } else {
+                    return nil
+                }
+            }
+        }
+    }
+    
+    /**
+    Parses the right hand side of a SwiftFunctionType.
+    
+    :param: parameterType The parameter type of the function.
+    :param: isBracketed Causes the type to be parsed differently if the left hand side includes a bracket.
+    
+    :returns: A SwiftFunctionType if no errors occured, nil otherwise.
+    **/
+    func parseFunctionTypeRHS(#parameterType: SwiftType, isBracketed bracketed: Bool = false) -> SwiftType? {
+        var type: SwiftFunctionType!
+        while true {
+            if tokens.isEmpty {
+                return type
+            }
+            switch tokens[0] {
+            case .Returns:
+                consumeToken()
+            case .RightBracket:
+                return type
+            default:
+                let lineContext = self.lineContext[0]
+                if let t = parseType() {
+                    type = SwiftFunctionType(parameterType: parameterType, returnType: t, lineContext: lineContext)
+                } else {
+                    return nil
+                }
+            }
+        }
+    }
+
+    // MARK: Expression parsing
     
     /**
     Parses a Swift expression.

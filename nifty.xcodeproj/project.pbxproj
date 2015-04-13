@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95272BC61ADBD329006F9548 /* TestTypeParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95272BC51ADBD329006F9548 /* TestTypeParsing.swift */; };
 		954D22991A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954D22981A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift */; };
 		956924C11A09735A0013318A /* parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956924C01A09735A0013318A /* parser.swift */; };
 		95938D031A82642600DE953C /* TestExpressionParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95938D021A82642600DE953C /* TestExpressionParsing.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		95272BC51ADBD329006F9548 /* TestTypeParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTypeParsing.swift; sourceTree = "<group>"; };
 		954D22981A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestFunctionDeclarationParsing.swift; sourceTree = "<group>"; };
 		956924C01A09735A0013318A /* parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = parser.swift; sourceTree = "<group>"; };
 		95938D021A82642600DE953C /* TestExpressionParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestExpressionParsing.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				95974E8E1A010011004E4EC3 /* TestLexicalAnalysis.swift */,
 				95B125151A0B843E003C832E /* TestDeclaration.swift */,
 				95938D021A82642600DE953C /* TestExpressionParsing.swift */,
+				95272BC51ADBD329006F9548 /* TestTypeParsing.swift */,
 				95974E971A0100A9004E4EC3 /* Supporting Files */,
 			);
 			path = "nifty-tests";
@@ -221,6 +224,7 @@
 				95938D031A82642600DE953C /* TestExpressionParsing.swift in Sources */,
 				954D22991A8BBFED0051CC30 /* TestFunctionDeclarationParsing.swift in Sources */,
 				95938D051A82754E00DE953C /* TestControlFlowParsing.swift in Sources */,
+				95272BC61ADBD329006F9548 /* TestTypeParsing.swift in Sources */,
 				95974E9F1A010104004E4EC3 /* tokeniser.swift in Sources */,
 				95B125141A0A882A003C832E /* error.swift in Sources */,
 				95974E9E1A0100F5004E4EC3 /* TestLexicalAnalysis.swift in Sources */,

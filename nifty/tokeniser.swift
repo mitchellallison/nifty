@@ -52,8 +52,10 @@ class SwiftLexicalRepresentation: Printable {
 // Representation of Swift's lexical syntax
 enum SwiftToken: Printable, Equatable {
     case Invalid(String)
+    
     case IntegerLiteral(Int)
     case DoubleLiteral(Double)
+    case Void
     
     case Identifier(String)
     
@@ -83,6 +85,8 @@ enum SwiftToken: Printable, Equatable {
             return val.description
         case .DoubleLiteral(let double):
             return double.description
+        case .Void:
+            return "Void"
         case .Identifier(let string):
             return string
         case .SemiColon:
@@ -252,6 +256,13 @@ enum SwiftToken: Printable, Equatable {
                 // Matches the false keyword
                 .match(/"^false(?!\(identifierRegex))") {
                     tokens.append(SwiftToken.False)
+                    context.append(LineContext(pos: cachedLinePos, line: cachedLine))
+                    linepos += count($0[0])
+                }?
+                
+                // Matches the false keywordf
+                .match(/"^Void(?!\(identifierRegex))") {
+                    tokens.append(SwiftToken.Void)
                     context.append(LineContext(pos: cachedLinePos, line: cachedLine))
                     linepos += count($0[0])
                 }?

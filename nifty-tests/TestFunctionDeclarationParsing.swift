@@ -14,7 +14,7 @@ class TestFunctionDeclarationParsing: XCTestCase {
         let program = "func foo() -> Void { }"
         if let ast = program.tokenise()?.parse(), let functionDeclaration = ast.children[0] as? SwiftFunctionDeclaration, let returnType = functionDeclaration.prototype.type {
             XCTAssertEqual(functionDeclaration.prototype.identifier, "foo", "Function identifier parsed incorrectly.")
-            XCTAssertEqual(returnType, SwiftTypeIdentifier(identifier: "Void", lineContext: nil), "Return type mismatch.")
+            XCTAssertEqual(returnType, SwiftTupleType(types: [], lineContext: nil), "Return type mismatch.")
             XCTAssert(functionDeclaration.prototype.parameters.isEmpty, "Parameter list parsed incorrectly.")
         } else {
             XCTFail("Issue parsing function.")
